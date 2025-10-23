@@ -1,0 +1,17 @@
+:root {
+  --color-primary: #4f46e5;
+  --color-secondary: #818cf8;
+  --color-bg: #f9fafb;
+  --color-text: #111827;
+  --font-family-base: "Inter", sans-serif;
+  --border-radius: 8px;
+  --transition-base: all 0.3s ease;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-family-base);
+  margin: 0;
+  padding: 0;
+}
