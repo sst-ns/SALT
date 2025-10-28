@@ -1,6 +1,13 @@
 import { Box, Button, Typography } from "@mui/material";
 
-const ActivateShiftMode = () => {
+type ActiveShiftModeProps = {
+  shift: string;
+  handleShiftClick: (s: string) => void;
+};
+const ActivateShiftMode = ({
+  shift,
+  handleShiftClick,
+}: ActiveShiftModeProps) => {
   return (
     <Box
       flex="1"
@@ -30,20 +37,26 @@ const ActivateShiftMode = () => {
         mt={1}
       >
         <Button
-          variant="contained"
-          color="primary"
-          sx={{ minWidth: 100, textTransform: "none" }}
-        >
-          Day
-        </Button>
-        <Button
-          variant="outlined"
+          variant={shift == "DAY" ? "contained" : "outlined"}
           color="primary"
           sx={{
             minWidth: 100,
             textTransform: "none",
             "&:hover": { backgroundColor: "primary.main", color: "#fff" },
           }}
+          onClick={() => handleShiftClick("DAY")}
+        >
+          Day
+        </Button>
+        <Button
+          variant={shift == "NIGHT" ? "contained" : "outlined"}
+          color="primary"
+          sx={{
+            minWidth: 100,
+            textTransform: "none",
+            "&:hover": { backgroundColor: "primary.main", color: "#fff" },
+          }}
+          onClick={() => handleShiftClick("NIGHT")}
         >
           Night
         </Button>
