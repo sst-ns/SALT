@@ -1,7 +1,88 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import ApiClient from "../services/apiClient";
+import DataTable from "../components/DataTable";
+import { CircularProgress, Typography, Box } from "@mui/material";
+
+interface LogRow {
+  id: number;
+  Action: string;
+  Response?: string;
+  [key: string]: any;
+}
 
 const Logs = () => {
-  return <div>Logs</div>;
+  const [tableData, setTableData] = useState<LogRow[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const columns = [
+    { header: "Date/Time", accessorKey: "date_time" },
+    { header: "Change Made", accessorKey: "change_made" },
+    { header: "Change Type", accessorKey: "change_type" },
+    { header: "User Name", accessorKey: "user_name" },
+    { header: "Log ID", accessorKey: "Logs_id" },
+  ];
+  useEffect(() => {
+    console.log("Component mounted, fetching logs...");
+    fetchLogs();
+  }, []);
+
+  const fetchLogs = async () => {
+    try {
+      setLoading(true);
+      const payload = { action: "fetch_logs" };
+      console.log("Sending payload:", payload);
+
+      const response = await ApiClient.post("lambda_SaltAppApi", payload);
+      console.log("Raw Lambda response:", response);
+
+      let body: LogRow[] = Array.isArray(response.body)
+        ? response.body
+        : response.body
+        ? JSON.parse(response.body)
+        : [];
+      console.log("Parsed body:", body);
+      setTableData(body);
+    } catch (error) {
+      console.error("Error fetching logs:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Box sx={{ ml: 4, my: 3 }}>
+      <Typography
+        variant="h6"
+        fontWeight={700}
+        color="primary.main"
+        mb={2}
+        sx={{
+          textTransform: "uppercase",
+          textAlign: "center",
+          letterSpacing: 0.5,
+        }}
+      >
+        Agent Logs
+      </Typography>
+      {loading ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <DataTable
+          data={tableData}
+          columns={columns}
+          rowsPerPageOptions={[5]}
+        />
+      )}
+    </Box>
+  );
 };
 
 export default Logs;
