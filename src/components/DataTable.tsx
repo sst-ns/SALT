@@ -8,22 +8,30 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  TextField,
+  Box,
+  Typography,
 } from "@mui/material";
 import {
   useReactTable,
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  getFilteredRowModel,
   flexRender,
   type ColumnDef,
 } from "@tanstack/react-table";
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   rowsPerPageOptions?: number[];
+  title?: string;
 }
+
 const DataTable = <TData, TValue>({
+  title,
   columns,
   data,
   rowsPerPageOptions = [5, 10, 25],
@@ -36,11 +44,18 @@ const DataTable = <TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(rowsPerPageOptions[0] ?? 5);
+  const [globalFilter, setGlobalFilter] = useState("");
+
   const table = useReactTable({
     data,
     columns,
-    state: { sorting, pagination: { pageIndex, pageSize } },
+    state: {
+      sorting,
+      globalFilter,
+      pagination: { pageIndex, pageSize },
+    },
     onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: (updater) => {
       const newState =
         typeof updater === "function"
@@ -49,9 +64,9 @@ const DataTable = <TData, TValue>({
       setPageIndex(newState.pageIndex ?? 0);
       setPageSize(newState.pageSize ?? 5);
     },
-
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
 
@@ -60,12 +75,66 @@ const DataTable = <TData, TValue>({
       <TableContainer
         component={Paper}
         sx={{
-          boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-          borderRadius: 2,
+          boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
+          borderRadius: 3,
           overflowX: "auto",
           width: "100%",
+          p: 1,
         }}
       >
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{
+            px: 3,
+            py: 2,
+            flexWrap: "wrap",
+            gap: 2,
+          }}
+        >
+          <Box sx={{ flex: 1 }} />
+
+          <Typography
+            variant="h6"
+            fontWeight={700}
+            color="primary.main"
+            textAlign="center"
+            sx={{
+              flex: 2,
+              textTransform: "uppercase",
+              letterSpacing: 0.7,
+            }}
+          >
+            {title}
+          </Typography>
+
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              gap: 1,
+              minWidth: 250,
+            }}
+          >
+            <SearchOutlinedIcon color="primary" />
+            <TextField
+              label="Search..."
+              variant="outlined"
+              size="small"
+              value={globalFilter ?? ""}
+              onChange={(e) => table.setGlobalFilter(e.target.value)}
+              sx={{
+                width: "100%",
+                bgcolor: "background.paper",
+                borderRadius: 1,
+              }}
+            />
+          </Box>
+        </Box>
+
         <Table>
           <TableHead sx={{ bgcolor: "primary.dark" }}>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -80,11 +149,6 @@ const DataTable = <TData, TValue>({
                         ? "pointer"
                         : "default",
                       color: "#fff",
-                      // "&:hover": {
-                      //   color: header.column.getCanSort()
-                      //     ? "primary.main"
-                      //     : "inherit",
-                      // },
                     }}
                     onClick={header.column.getToggleSortingHandler()}
                   >
@@ -141,7 +205,7 @@ const DataTable = <TData, TValue>({
 
       <TablePagination
         component="div"
-        count={data.length}
+        count={table.getFilteredRowModel().rows.length}
         page={pageIndex}
         onPageChange={(_e, newPage) => setPageIndex(newPage)}
         rowsPerPage={pageSize}
@@ -151,12 +215,13 @@ const DataTable = <TData, TValue>({
         }}
         rowsPerPageOptions={rowsPerPageOptions}
         sx={{
-          color: "#fff",
           mt: 1,
-          alignSelf: "flex-end",
           width: "100%",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
           bgcolor: "primary.dark",
+          color: "#fff",
+          borderBottomLeftRadius: 8,
+          borderBottomRightRadius: 8,
         }}
       />
     </>
