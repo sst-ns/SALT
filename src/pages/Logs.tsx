@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import ApiClient from "../services/apiClient";
 import DataTable from "../components/DataTable";
-import { CircularProgress, Typography, Box } from "@mui/material";
+import {Typography, Box } from "@mui/material";
+import Spinner from "../components/Spinner";
 
 interface LogRow {
   id: number;
@@ -72,13 +73,12 @@ const Logs = () => {
             alignItems: "center",
           }}
         >
-          <CircularProgress />
+          <Spinner />
         </Box>
       ) : (
         <DataTable
           data={tableData}
           columns={columns}
-          rowsPerPageOptions={[5]}
         />
       )}
     </Box>
