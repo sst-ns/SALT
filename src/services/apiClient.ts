@@ -12,6 +12,7 @@ const lambdaClient = new LambdaClient({
 
 const LAMBDA_ENDPOINTS = {
   lambda_SaltAppApi: "Salt_App_Api",
+  lambda_MobileNumbersUpdate: "mobile_numbers_update",
   default: "",
 };
 

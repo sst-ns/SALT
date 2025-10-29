@@ -10,36 +10,72 @@ import {
 import DataTable from "../../components/DataTable";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import type { TableData } from "./Home";
+import axios from "axios";
+import toast from "react-hot-toast";
+import Spinner from "../../components/Spinner";
 
 type HomeTableProps = {
+  loading?: boolean;
   tableData: TableData[];
   setTableData: React.Dispatch<React.SetStateAction<TableData[]>>;
 };
-const HomeTable = ({ tableData, setTableData }: HomeTableProps) => {
+const HomeTable = ({ loading, tableData }: HomeTableProps) => {
   const [open, setOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<TableData | null>(null);
+  const [selectedEditRow, setSelectedEditRow] = useState<TableData | null>(
+    null
+  );
 
   const handleEditClick = (row: TableData) => {
-    setSelectedRow(row);
+    console.log("row", row);
+    setSelectedEditRow(row);
     setOpen(true);
   };
 
-  const handleSave = (updatedData: TableData) => {
-    setTableData((prev) =>
-      prev.map((row) => (row.id === updatedData.id ? updatedData : row))
-    );
+  const handleSave = async (updatedData: TableData) => {
+    // console.log("Updated Data", updatedData);
+
+    try {
+      const rowData = {
+        skill_group: updatedData.skill_group,
+        agent_name: updatedData.agent_name,
+        R_1: updatedData.R_1,
+        R_2: updatedData.R_2,
+        R_3: updatedData.R_3,
+        R_4: updatedData.R_4,
+      };
+
+      const article = {
+        operation: "UPDATE",
+        roster_name: "",
+        new_name: rowData,
+        shift: "",
+        selected_row: "",
+        user_name: "username update",
+      };
+      const res = await axios.post(import.meta.env.VITE_API_URL, article);
+      if (res.data === "Roster Updated") {
+        toast.success("Roster Updated, Thanks!!");
+        // getTableData() // after update do  I reload the table ?
+      } else {
+        toast.error("Sorry!,User does Not Exist ,Please Try Again");
+      }
+      console.log("res update", res);
+    } catch (error) {
+      console.log("error in update", error);
+      toast.error("Sorry, Something went wrong ,Please Try Again");
+    }
   };
 
   const columns = useMemo(
     () => [
-      { accessorKey: "id", header: "Sr. No." },
-      { accessorKey: "skillGroup", header: "Skill Group" },
+      // { accessorKey: "id", header: "Sr. No." },
+      { accessorKey: "skill_group", header: "Skill Group" },
       { accessorKey: "date", header: "Date" },
-      { accessorKey: "r1", header: "R-1" },
-      { accessorKey: "r2", header: "R-2" },
-      { accessorKey: "r3", header: "R-3" },
-      { accessorKey: "r4", header: "R-4" },
-      { accessorKey: "agentName", header: "Agent Name" },
+      { accessorKey: "R_1", header: "R-1" },
+      { accessorKey: "R_2", header: "R-2" },
+      { accessorKey: "R_3", header: "R-3" },
+      { accessorKey: "R_4", header: "R-4" },
+      { accessorKey: "agent_name", header: "Agent Name" },
       { accessorKey: "shift", header: "Shift" },
       {
         id: "operation",
@@ -62,28 +98,22 @@ const HomeTable = ({ tableData, setTableData }: HomeTableProps) => {
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" width="100%">
-      <Typography
-        variant="h6"
-        fontWeight={700}
-        color="primary.main"
-        mb={2}
-        sx={{
-          textTransform: "uppercase",
-          textAlign: "center",
-          letterSpacing: 0.5,
-        }}
-      >
-        Skill Based Call Routing Details
-      </Typography>
-
-      <DataTable<TableData, unknown> columns={columns} data={tableData} />
+      {loading ? (
+        <Spinner />
+      ) : (
+        <DataTable<TableData, unknown>
+          columns={columns}
+          data={tableData}
+          title={"Skill Based Call Routing Details"}
+        />
+      )}
 
       {/* Edit Modal */}
       <EditModal
         open={open}
         onClose={() => setOpen(false)}
         onSave={handleSave}
-        rowData={selectedRow}
+        rowData={selectedEditRow}
       />
     </Box>
   );
@@ -122,7 +152,7 @@ const EditModal = ({ open, onClose, onSave, rowData }: EditModalProps) => {
   };
 
   const handleSave = () => {
-    console.log("form data", formData);
+    // console.log("form data", formData);
     onSave(formData);
     onClose();
   };
@@ -163,8 +193,8 @@ const EditModal = ({ open, onClose, onSave, rowData }: EditModalProps) => {
           /> */}
           <TextField
             label="Agent Name"
-            value={formData.agentName}
-            onChange={(e) => handleChange("agentName", e.target.value)}
+            value={formData.agent_name}
+            onChange={(e) => handleChange("agent_name", e.target.value)}
             fullWidth
           />
         </Stack>

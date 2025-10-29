@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import NumberRosterTable from "./NumberRosterTable";
 import { useEffect, useState } from "react";
-import { API_MAP, apiClient } from "../../services/api";
+import ApiClient from "../../services/apiClient";
 
 export type AgentNumberType = {
   // id: number;
@@ -10,17 +10,33 @@ export type AgentNumberType = {
   SIM_2: string;
 };
 const NumberRoster = () => {
-  const [agentNumber, setAgentNumber] = useState([]);
+  const [agentNumber, setAgentNumber] = useState<AgentNumberType[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
   useEffect(() => {
     const getAgentNumber = async () => {
+      setLoading(true);
       try {
-        const res = await apiClient.request({
-          ...API_MAP.agentNumber,
-        });
-        console.log("res agent number", res);
-        setAgentNumber(res.data);
+        const payload = {
+          action: "fetch_agent_number",
+        };
+        console.log("Sending payload in number:", payload);
+
+        const response = await ApiClient.post("lambda_SaltAppApi", payload);
+        console.log("Raw Lambda response:", response);
+
+        let body: AgentNumberType[] = Array.isArray(response.body)
+          ? response.body
+          : response.body
+          ? JSON.parse(response.body)
+          : [];
+        console.log("Parsed body in number:", body);
+
+        setAgentNumber(body);
       } catch (error) {
         console.log("Error in number roster data", error);
+      } finally {
+        setLoading(false);
       }
     };
     getAgentNumber();
@@ -28,7 +44,7 @@ const NumberRoster = () => {
 
   return (
     <Box width="100%" display="flex" flexDirection="column" px={4}>
-      <NumberRosterTable tableData={agentNumber} />
+      <NumberRosterTable loading={loading} tableData={agentNumber} />
     </Box>
   );
 };
