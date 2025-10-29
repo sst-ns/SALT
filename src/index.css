@@ -3,3 +3,69 @@
   padding: 0;
   box-sizing: border-box;
 }
+.border-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 8px;
+}
+.filterForm {
+  padding: 0.5rem 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  flex: 1 1 220px;
+  align-items: center;
+  font-size: 12px
+}
+.error-border {
+  border: 1px solid red !important;
+}
+#did_number {
+  width: 100%;
+  color: black;
+  padding: 0 !important;
+  border: 1px solid hsl(0, 0%, 80%);
+  border-radius: 4px;
+  min-height: 38px;
+  display: inline-block;
+}
+#companyName {
+  width: 100%;
+  padding: 0 !important;
+  color: black;
+  border-radius: 4px;
+  display: inline-block;
+}
+#CFName {
+  width: 100%;
+  padding: 0 !important;
+  color: black;
+  display: inline-block;
+  border-radius: 4px;
+  min-height: 38px;
+}
+.filterSubmit {
+  background-color: #8A2BE2;
+  color: white;
+  padding: 5px 15px;
+  border: 1px solid #8A2BE2;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.tabledata table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.tabledata th,
+.tabledata td {
+  white-space: normal !important;
+  word-wrap: break-word;
+  text-align: center;
+}
+.swal-footer{
+  text-align: center;
+}

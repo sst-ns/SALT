@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import ApiClient from "../services/apiClient";
 import DataTable from "../components/DataTable";
-import { CircularProgress, Typography, Box } from "@mui/material";
+import {Typography, Box } from "@mui/material";
+import Spinner from "../components/Spinner";
 
 interface LogRow {
   id: number;
@@ -50,20 +51,7 @@ const Logs = () => {
   };
 
   return (
-    <Box sx={{ ml: 4, my: 3 }}>
-      <Typography
-        variant="h6"
-        fontWeight={700}
-        color="primary.main"
-        mb={2}
-        sx={{
-          textTransform: "uppercase",
-          textAlign: "center",
-          letterSpacing: 0.5,
-        }}
-      >
-        Agent Logs
-      </Typography>
+    <Box sx={{ pl: 4, pr: 4 }}>
       {loading ? (
         <Box
           sx={{
@@ -72,13 +60,13 @@ const Logs = () => {
             alignItems: "center",
           }}
         >
-          <CircularProgress />
+          <Spinner />
         </Box>
       ) : (
         <DataTable
           data={tableData}
           columns={columns}
-          rowsPerPageOptions={[5]}
+          title={"Agent Logs"}
         />
       )}
     </Box>
