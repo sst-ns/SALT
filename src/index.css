@@ -8,12 +8,15 @@
   align-items: center;
   gap: 10px;
   justify-content: center;
-  border: 2px solid grey;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 8px;
 }
 .filterForm {
   padding: 0.5rem 0.5rem;
   display: flex;
   justify-content: space-between;
+  flex: 1 1 220px;
   align-items: center;
   font-size: 12px
 }

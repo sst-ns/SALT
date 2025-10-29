@@ -19,7 +19,6 @@ const Spinner = () => {
         flexDirection: "column",
         pointerEvents: "none",
         overflow: "hidden",
-        border: "1px solid red",
       }}
       open
     >

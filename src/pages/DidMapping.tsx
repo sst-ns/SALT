@@ -6,6 +6,7 @@ import ApiClient from "../services/apiClient";
 import Spinner from "../components/Spinner";
 import DataTable from "../components/DataTable";
 import "react-toastify/dist/ReactToastify.css";
+import { Box } from "@mui/material";
 
 interface DropdownOption {
   label: string;
@@ -279,7 +280,7 @@ export default function DidMapping() {
   ];
 
   return (
-    <div>
+    <Box width="100%" px={4} py={3}>
       {userRole === "Admin" && (
         <div className="border-horizontal">
           <div className="filterForm">
@@ -342,9 +343,9 @@ export default function DidMapping() {
             <Spinner />
           </div>
         ) : (
-          <DataTable data={tableData} columns={columns} />
+          <DataTable data={tableData} columns={columns} title={"DID Mapping"} />
         )}
       </div>
-    </div>
+    </Box>
   );
 }

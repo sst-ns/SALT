@@ -51,20 +51,7 @@ const Logs = () => {
   };
 
   return (
-    <Box sx={{ ml: 4, my: 3 }}>
-      <Typography
-        variant="h6"
-        fontWeight={700}
-        color="primary.main"
-        mb={2}
-        sx={{
-          textTransform: "uppercase",
-          textAlign: "center",
-          letterSpacing: 0.5,
-        }}
-      >
-        Agent Logs
-      </Typography>
+    <Box sx={{ pl: 4, pr: 4 }}>
       {loading ? (
         <Box
           sx={{
@@ -79,6 +66,7 @@ const Logs = () => {
         <DataTable
           data={tableData}
           columns={columns}
+          title={"Agent Logs"}
         />
       )}
     </Box>
