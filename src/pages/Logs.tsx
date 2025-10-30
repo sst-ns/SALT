@@ -25,7 +25,7 @@ const Logs = () => {
     { header: "Change-Type", accessorKey: "change_type" },
     { header: "Change-Made", accessorKey: "change_made" },
     {
-      header: "Date-Time",
+      header: "Date-Time - Europe/Berlin",
       accessorKey: "date_time",
       sorter: (a: LogRow, b: LogRow) =>
         moment(a.date_time, "MM-DD-YYYY HH:mm:ss").valueOf() -
