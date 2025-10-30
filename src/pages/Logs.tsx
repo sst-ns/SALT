@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ApiClient from "../services/apiClient";
 import DataTable from "../components/DataTable";
-import {Typography, Box } from "@mui/material";
+import { Box } from "@mui/material";
 import Spinner from "../components/Spinner";
 
 interface LogRow {
@@ -63,11 +63,7 @@ const Logs = () => {
           <Spinner />
         </Box>
       ) : (
-        <DataTable
-          data={tableData}
-          columns={columns}
-          title={"Agent Logs"}
-        />
+        <DataTable data={tableData} columns={columns} title={"Agent Logs"} />
       )}
     </Box>
   );
