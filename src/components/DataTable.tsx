@@ -66,7 +66,7 @@ const DataTable = <TData, TValue>({
       id: "sno",
       header: "S.No.",
       cell: ({ row, table }) => {
-        const data = table.options.data; // original, unfiltered data
+        const data = table.options.data;
         const originalIndex = data.indexOf(row.original);
         return originalIndex + 1;
       },
