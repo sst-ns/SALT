@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import ApiClient from "../services/apiClient";
 import DataTable from "../components/DataTable";
-import {Typography, Box } from "@mui/material";
+import { Box } from "@mui/material";
 import Spinner from "../components/Spinner";
+import moment from "moment";
 
 interface LogRow {
   id: number;
-  Action: string;
-  Response?: string;
+  Logs_id: number;
+  user_name: string;
+  change_type: string;
+  change_made: string;
+  date_time: string;
   [key: string]: any;
 }
 
@@ -16,11 +20,18 @@ const Logs = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const columns = [
-    { header: "Date/Time", accessorKey: "date_time" },
-    { header: "Change Made", accessorKey: "change_made" },
-    { header: "Change Type", accessorKey: "change_type" },
-    { header: "User Name", accessorKey: "user_name" },
-    { header: "Log ID", accessorKey: "Logs_id" },
+    { header: "Logs-Id", accessorKey: "Logs_id" },
+    { header: "Agent-Name", accessorKey: "user_name" },
+    { header: "Change-Type", accessorKey: "change_type" },
+    { header: "Change-Made", accessorKey: "change_made" },
+    {
+      header: "Date-Time - Europe/Berlin",
+      accessorKey: "date_time",
+      sorter: (a: LogRow, b: LogRow) =>
+        moment(a.date_time, "MM-DD-YYYY HH:mm:ss").valueOf() -
+        moment(b.date_time, "MM-DD-YYYY HH:mm:ss").valueOf(),
+      defaultSortOrder: "descend",
+    },
   ];
   useEffect(() => {
     console.log("Component mounted, fetching logs...");
@@ -31,7 +42,6 @@ const Logs = () => {
     try {
       setLoading(true);
       const payload = { action: "fetch_logs" };
-      console.log("Sending payload:", payload);
 
       const response = await ApiClient.post("lambda_SaltAppApi", payload);
       console.log("Raw Lambda response:", response);
@@ -41,8 +51,14 @@ const Logs = () => {
         : response.body
         ? JSON.parse(response.body)
         : [];
-      console.log("Parsed body:", body);
-      setTableData(body);
+      // Format date
+      const formattedBody = body.map((row) => ({
+        ...row,
+        date_time: moment(row.date_time, "MM-DD-YYYY HH:mm:ss").format(
+          "MMMM D, YYYY h:mm A"
+        ),
+      }));
+      setTableData(formattedBody);
     } catch (error) {
       console.error("Error fetching logs:", error);
     } finally {
@@ -63,11 +79,7 @@ const Logs = () => {
           <Spinner />
         </Box>
       ) : (
-        <DataTable
-          data={tableData}
-          columns={columns}
-          title={"Agent Logs"}
-        />
+        <DataTable data={tableData} columns={columns} title={"Agent Logs"} />
       )}
     </Box>
   );
