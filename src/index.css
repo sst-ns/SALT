@@ -16,7 +16,6 @@
   padding: 0.5rem 0.5rem;
   display: flex;
   justify-content: space-between;
-  flex: 1 1 220px;
   align-items: center;
   font-size: 12px
 }
