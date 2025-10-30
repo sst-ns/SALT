@@ -46,14 +46,34 @@ const DataTable = <TData, TValue>({
   const [pageSize, setPageSize] = useState(rowsPerPageOptions[0] ?? 5);
   const [globalFilter, setGlobalFilter] = useState("");
 
+  // with filter
+  // const columnsWithIndex: ColumnDef<TData, TValue>[] = [
+  //   {
+  //     id: "sno",
+  //     header: "S.No.",
+  //     cell: ({ row, table }) => {
+  //       const { pageIndex, pageSize } = table.getState().pagination;
+  //       const rowNumber =
+  //         pageIndex * pageSize + table.getRowModel().rows.indexOf(row) + 1;
+  //       return rowNumber;
+  //     },
+  //   },
+  //   ...columns,
+  // ];
+
   const columnsWithIndex: ColumnDef<TData, TValue>[] = [
     {
       id: "sno",
       header: "S.No.",
-      cell: ({ row }) => pageIndex * pageSize + row.index + 1,
+      cell: ({ row, table }) => {
+        const data = table.options.data;
+        const originalIndex = data.indexOf(row.original);
+        return originalIndex + 1;
+      },
     },
     ...columns,
   ];
+
   const table = useReactTable({
     data,
     columns: columnsWithIndex,
