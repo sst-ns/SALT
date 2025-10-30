@@ -46,9 +46,17 @@ const DataTable = <TData, TValue>({
   const [pageSize, setPageSize] = useState(rowsPerPageOptions[0] ?? 5);
   const [globalFilter, setGlobalFilter] = useState("");
 
+  const columnsWithIndex: ColumnDef<TData, TValue>[] = [
+    {
+      id: "sno",
+      header: "S.No.",
+      cell: ({ row }) => pageIndex * pageSize + row.index + 1,
+    },
+    ...columns,
+  ];
   const table = useReactTable({
     data,
-    columns,
+    columns: columnsWithIndex,
     state: {
       sorting,
       globalFilter,
@@ -135,7 +143,17 @@ const DataTable = <TData, TValue>({
           </Box>
         </Box>
 
-        <Table>
+        <Table
+          sx={{
+            borderCollapse: "collapse",
+            "& th, & td": {
+              borderRight: "1px solid rgba(224, 224, 224, 0.6)",
+            },
+            "& th:last-child, & td:last-child": {
+              borderRight: "none",
+            },
+          }}
+        >
           <TableHead sx={{ bgcolor: "primary.dark" }}>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
