@@ -7,6 +7,8 @@ import Spinner from "../components/Spinner";
 import DataTable from "../components/DataTable";
 import { Box } from "@mui/material";
 import axios from "axios";
+import { UserContext } from "../components/context/UserContext";
+import { useContext } from "react";
 
 interface DropdownOption {
   label: string;
@@ -60,6 +62,7 @@ export default function DidMapping() {
   const [_userRole, setUserRole] = useState<string>("");
   const [editAccess, setEditAccess] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
+  const user = useContext(UserContext);
 
   const [state, setState] = useState({
     didnumber: "",
@@ -75,19 +78,17 @@ export default function DidMapping() {
 
   const fetchUserRole = async () => {
     try {
-      const enterpriseId = "p.yuvraj.suryawanshi";
-      // const userName = window.sessionStorage.getItem("userName") || "";
-      setUsername(enterpriseId);
 
-      if (!enterpriseId) {
+      if (!user?.enterpriseId) {
         console.warn("No enterprise_id found");
         setEditAccess(false);
         return;
       }
+      setUsername(user?.enterpriseId)
 
       const res = await ApiClient.post("lambda_SaltAppApi", {
         action: "fetch_role",
-        enterprise_id: enterpriseId,
+        enterprise_id: user?.enterpriseId,
       });
       console.log("userRole", res.body.Role);
 
