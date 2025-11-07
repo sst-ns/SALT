@@ -3,6 +3,13 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./components/layouts/Layout";
 import Loading from "./components/Spinner";
 
+// Define the User type here
+interface User {
+  enterpriseId: string;
+}
+interface AppRouterProps {
+  user: User;
+}
 const router = createBrowserRouter([
   {
     path: "",
@@ -61,8 +68,8 @@ const router = createBrowserRouter([
   },
 ]);
 
-const AppRouter = () => {
+const AppRouter: React.FC<AppRouterProps> = ({ user }) => {
+  console.log("User in router:", user);
   return <RouterProvider router={router} />;
 };
-
 export default AppRouter;
