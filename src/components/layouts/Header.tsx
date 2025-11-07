@@ -1,5 +1,7 @@
 import { Box, Button, Typography, useTheme } from "@mui/material";
 import { NavLink } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
 const headerItems = [
   { title: "Home", href: "/" },
@@ -11,6 +13,12 @@ const headerItems = [
 
 const Header = () => {
   const theme = useTheme();
+  const user = useContext(UserContext);
+
+  const signOut = () => {
+    sessionStorage.clear();
+    window.location.href = import.meta.env.VITE_REACT_SAML_LOGIN_URL;
+  };
 
   return (
     <Box
@@ -18,8 +26,8 @@ const Header = () => {
       display="flex"
       alignItems="center"
       justifyContent="space-between"
-      px={4}
-      py={1.5}
+      // px={4}
+      // py={1.5}
       width="100%"
       sx={{
         bgcolor: "background.paper",
@@ -28,6 +36,7 @@ const Header = () => {
         boxShadow: "0 2px 6px rgba(0, 0, 0, 0.08)",
         zIndex: 1100,
         transition: "background-color 0.3s ease",
+        height: "75px",
       }}
     >
       {/* Left: App Logo */}
@@ -36,6 +45,7 @@ const Header = () => {
         display="flex"
         alignItems="center"
         justifyContent="flex-start"
+        px={2}
       >
         <Box
           component="img"
@@ -90,13 +100,12 @@ const Header = () => {
           </NavLink>
         ))}
       </Box>
-
       <Box
-        flex="1"
         display="flex"
         alignItems="center"
-        justifyContent="flex-end"
         gap={2}
+        flex="1"
+        justifyContent="flex-end"
       >
         <Box
           component="img"
@@ -109,25 +118,44 @@ const Header = () => {
             display: "block",
           }}
         />
-
-        <Button
-          variant="contained"
-          color="primary"
-          size="small"
-          sx={{
-            textTransform: "none",
-            fontWeight: 500,
-            boxShadow: "none",
-            borderRadius: 1,
-            px: 2.5,
-            py: 0.5,
-            "&:hover": {
-              boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
-            },
-          }}
+        <Box
+          flex="1"
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
         >
-          Sign Out
-        </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            sx={{
+              textTransform: "none",
+              fontWeight: 500,
+              boxShadow: "none",
+              borderRadius: 1,
+              px: 2.5,
+              py: 0.5,
+              "&:hover": {
+                boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+              },
+            }}
+            onClick={signOut}
+          >
+            Sign Out
+          </Button>
+          {user?.enterpriseId && (
+            <Typography
+              variant="body2"
+              sx={{
+                mt: 0.5,
+                fontWeight: 500,
+              }}
+            >
+              {user.enterpriseId}
+            </Typography>
+          )}
+        </Box>
       </Box>
     </Box>
   );

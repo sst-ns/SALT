@@ -1,14 +1,22 @@
 import axios from "axios";
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
+import { getCredentialsProvider } from "../components/hooks/useSamlauth";
+
+// AWS Lambda client setup local
+// const lambdaClient = new LambdaClient({
+//   region: import.meta.env.VITE_REACT_AWS_REGION as string,
+//   credentials: {
+//     accessKeyId: import.meta.env.VITE_REACT_AWS_ACCESS_KEY as string,
+//     secretAccessKey: import.meta.env.VITE_REACT_AWS_SECRET_KEY as string,
+//   },
+// });
 
 // AWS Lambda client setup
-const lambdaClient = new LambdaClient({
-  region: import.meta.env.VITE_REACT_AWS_REGION as string,
-  credentials: {
-    accessKeyId: import.meta.env.VITE_REACT_AWS_ACCESS_KEY as string,
-    secretAccessKey: import.meta.env.VITE_REACT_AWS_SECRET_KEY as string,
-  },
-});
+const lambdaClient = () =>
+  new LambdaClient({
+    region: import.meta.env.VITE_REACT_AWS_REGION,
+    credentials: getCredentialsProvider(),
+  });
 
 const LAMBDA_ENDPOINTS = {
   lambda_SaltAppApi: "Salt_App_Api",
@@ -48,7 +56,8 @@ const ApiClient = {
         Payload: JSON.stringify(data),
       });
 
-      const response = await lambdaClient.send(command);
+      const client = lambdaClient();
+      const response = await client.send(command);
 
       if (!response.Payload) return null;
       const decoded = new TextDecoder().decode(response.Payload);
