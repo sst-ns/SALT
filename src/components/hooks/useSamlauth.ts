@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
+// import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 import { startPkceLogin } from "../../auth/pkce";
 import { exchangeCodeForTokens } from "../../auth/token";
 
@@ -100,18 +100,18 @@ export const useSamlAuth = () => {
 };
 
 // Helper function to create credentials provider
-export const getCredentialsProvider = () =>
-  fromCognitoIdentityPool({
-    identityPoolId: import.meta.env.VITE_REACT_AWS_IDENTITY_POOL_ID,
-    logins: {
-      [`cognito-idp.${import.meta.env.VITE_REACT_AWS_REGION}.amazonaws.com/${
-        import.meta.env.VITE_REACT_AWS_USER_POOL_ID
-      }`]: window.sessionStorage.getItem("tkn_frm_saml") || "",
-    },
-    clientConfig: {
-      region: import.meta.env.VITE_REACT_AWS_REGION,
-    },
-  });
+// export const getCredentialsProvider = () =>
+//   fromCognitoIdentityPool({
+//     identityPoolId: import.meta.env.VITE_REACT_AWS_IDENTITY_POOL_ID,
+//     logins: {
+//       [`cognito-idp.${import.meta.env.VITE_REACT_AWS_REGION}.amazonaws.com/${
+//         import.meta.env.VITE_REACT_AWS_USER_POOL_ID
+//       }`]: window.sessionStorage.getItem("tkn_frm_saml") || "",
+//     },
+//     clientConfig: {
+//       region: import.meta.env.VITE_REACT_AWS_REGION,
+//     },
+//   });
 
 // export const getCredentialsProvider = () => {
 //   const token = window.sessionStorage.getItem("tkn_frm_saml");

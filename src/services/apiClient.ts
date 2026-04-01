@@ -1,6 +1,7 @@
 import axios from "axios";
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
-import { getCredentialsProvider } from "../components/hooks/useSamlauth";
+// import { getCredentialsProvider } from "../components/hooks/useSamlauth";
+import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 
 // AWS Lambda client setup local
 // const lambdaClient = new LambdaClient({
@@ -12,11 +13,24 @@ import { getCredentialsProvider } from "../components/hooks/useSamlauth";
 // });
 
 // AWS Lambda client setup
-const lambdaClient = () =>
-  new LambdaClient({
-    region: import.meta.env.VITE_REACT_AWS_REGION,
-    credentials: getCredentialsProvider(),
-  });
+// const lambdaClient = () =>
+//   new LambdaClient({
+//     region: import.meta.env.VITE_REACT_AWS_REGION,
+//     credentials: getCredentialsProvider(),
+//   });
+const lambdaClient = new LambdaClient({
+  region: import.meta.env.VITE_REACT_AWS_REGION,
+  credentials: async () =>
+    fromCognitoIdentityPool({
+      identityPoolId: import.meta.env.VITE_REACT_AWS_IDENTITY_POOL_ID,
+      logins: {
+        [`cognito-idp.${import.meta.env.VITE_REACT_AWS_REGION}.amazonaws.com/${
+          import.meta.env.VITE_REACT_AWS_USER_POOL_ID
+        }`]: window.sessionStorage.getItem("tkn_frm_saml") || "",
+      },
+      clientConfig: { region: import.meta.env.VITE_REACT_AWS_REGION },
+    })(),
+});
 
 const LAMBDA_ENDPOINTS = {
   lambda_SaltAppApi: "Salt_App_Api",
@@ -56,7 +70,7 @@ const ApiClient = {
         Payload: JSON.stringify(data),
       });
 
-      const client = lambdaClient();
+      const client = lambdaClient;
       const response = await client.send(command);
 
       if (!response.Payload) return null;

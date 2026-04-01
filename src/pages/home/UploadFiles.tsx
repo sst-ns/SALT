@@ -5,7 +5,8 @@ import { Upload } from "@aws-sdk/lib-storage";
 
 import ApiClient from "../../services/apiClient";
 import toast from "react-hot-toast";
-import { getCredentialsProvider } from "../../components/hooks/useSamlauth";
+// import { getCredentialsProvider } from "../../components/hooks/useSamlauth";
+import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 
 const Number_BUCKET = "agent-numbers";
 const Roster_BUCKET = "uploadexcelfile";
@@ -16,13 +17,26 @@ const UploadFiles = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
+    // const client = new S3Client({
+    //   region: import.meta.env.VITE_REACT_AWS_REGION,
+    //   // credentials: {
+    //   //   accessKeyId: import.meta.env.VITE_REACT_AWS_ACCESS_KEY,
+    //   //   secretAccessKey: import.meta.env.VITE_REACT_AWS_SECRET_KEY,
+    //   // },
+    //   credentials: getCredentialsProvider(),
+    // });
     const client = new S3Client({
       region: import.meta.env.VITE_REACT_AWS_REGION,
-      // credentials: {
-      //   accessKeyId: import.meta.env.VITE_REACT_AWS_ACCESS_KEY,
-      //   secretAccessKey: import.meta.env.VITE_REACT_AWS_SECRET_KEY,
-      // },
-      credentials: getCredentialsProvider(),
+      credentials: async () =>
+        fromCognitoIdentityPool({
+          identityPoolId: import.meta.env.VITE_REACT_AWS_IDENTITY_POOL_ID,
+          logins: {
+            [`cognito-idp.${import.meta.env.VITE_REACT_AWS_REGION}.amazonaws.com/${
+              import.meta.env.VITE_REACT_AWS_USER_POOL_ID
+            }`]: window.sessionStorage.getItem("tkn_frm_saml") || "",
+          },
+          clientConfig: { region: import.meta.env.VITE_REACT_AWS_REGION },
+        })(),
     });
     setS3Client(client);
   }, []);
