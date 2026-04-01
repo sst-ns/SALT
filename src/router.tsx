@@ -67,7 +67,7 @@ const router = createBrowserRouter([
   },
 ]);
 
-const AppRouter: React.FC<AppRouterProps> = ({ user }) => {
+const AppRouter: React.FC<AppRouterProps> = () => {
   // console.log("User in router:", user);
   return <RouterProvider router={router} />;
 };
