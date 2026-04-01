@@ -43,8 +43,8 @@ const customSelectStyles = {
     backgroundColor: state.isSelected
       ? "#d8b4fe"
       : state.isFocused
-      ? "#f3e8ff"
-      : "white",
+        ? "#f3e8ff"
+        : "white",
     color: state.isSelected ? "#4b0082" : "#333",
     "&:active": { backgroundColor: "#d8b4fe" },
     "&:focus": { outline: "none" },
@@ -78,19 +78,18 @@ export default function DidMapping() {
 
   const fetchUserRole = async () => {
     try {
-
       if (!user?.enterpriseId) {
         console.warn("No enterprise_id found");
         setEditAccess(false);
         return;
       }
-      setUsername(user?.enterpriseId)
+      setUsername(user?.enterpriseId);
 
       const res = await ApiClient.post("lambda_SaltAppApi", {
         action: "fetch_role",
         enterprise_id: user?.enterpriseId,
       });
-      console.log("userRole", res.body.Role);
+      // console.log("userRole", res.body.Role);
 
       const role = res?.body?.Role || "";
       setUserRole(role);
@@ -129,7 +128,7 @@ export default function DidMapping() {
           label: d.PhoneNumber,
           value: d.PhoneNumber,
           id: i,
-        }))
+        })),
       );
 
       setCompanyList(
@@ -137,7 +136,7 @@ export default function DidMapping() {
           label: c,
           value: c,
           id: i,
-        }))
+        })),
       );
 
       setCfList(
@@ -145,7 +144,7 @@ export default function DidMapping() {
           label: c,
           value: c,
           id: i,
-        }))
+        })),
       );
 
       setQueueList(
@@ -153,7 +152,7 @@ export default function DidMapping() {
           label: q,
           value: q,
           id: i,
-        }))
+        })),
       );
     } catch (error) {
       console.error("Error fetching dropdown data:", error);
@@ -174,8 +173,8 @@ export default function DidMapping() {
       const body = Array.isArray(res.body)
         ? res.body
         : typeof res.body === "string"
-        ? JSON.parse(res.body)
-        : [];
+          ? JSON.parse(res.body)
+          : [];
 
       const processed = body.map((item: any, i: number) => ({
         id: i + 1,
