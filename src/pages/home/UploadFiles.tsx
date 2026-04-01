@@ -5,6 +5,7 @@ import { Upload } from "@aws-sdk/lib-storage";
 
 import ApiClient from "../../services/apiClient";
 import toast from "react-hot-toast";
+import { getCredentialsProvider } from "../../components/hooks/useSamlauth";
 
 const Number_BUCKET = "agent-numbers";
 const Roster_BUCKET = "uploadexcelfile";
@@ -14,14 +15,14 @@ const UploadFiles = () => {
   const [s3Client, setS3Client] = useState<S3Client | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  console.log("s3 client", s3Client);
   useEffect(() => {
     const client = new S3Client({
       region: import.meta.env.VITE_REACT_AWS_REGION,
-      credentials: {
-        accessKeyId: import.meta.env.VITE_REACT_AWS_ACCESS_KEY,
-        secretAccessKey: import.meta.env.VITE_REACT_AWS_SECRET_KEY,
-      },
+      // credentials: {
+      //   accessKeyId: import.meta.env.VITE_REACT_AWS_ACCESS_KEY,
+      //   secretAccessKey: import.meta.env.VITE_REACT_AWS_SECRET_KEY,
+      // },
+      credentials: getCredentialsProvider(),
     });
     setS3Client(client);
   }, []);
@@ -78,14 +79,14 @@ const UploadFiles = () => {
 
         const lambdaResponse = await ApiClient.post(
           "lambda_MobileNumbersUpdate",
-          payload
+          payload,
         );
 
         // console.log("Lambda response for numberUpdate:", lambdaResponse);
 
         if (lambdaResponse?.statusCode === 200) {
           toast.success(
-            lambdaResponse.body || "Mobile numbers updated successfully!"
+            lambdaResponse.body || "Mobile numbers updated successfully!",
           );
         } else {
           toast.error(lambdaResponse?.error || "Lambda processing failed.");

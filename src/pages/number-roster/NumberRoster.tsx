@@ -20,21 +20,21 @@ const NumberRoster = () => {
         const payload = {
           action: "fetch_agent_number",
         };
-        console.log("Sending payload in number:", payload);
+        // console.log("Sending payload in number:", payload);
 
         const response = await ApiClient.post("lambda_SaltAppApi", payload);
-        console.log("Raw Lambda response:", response);
+        // console.log("Raw Lambda response:", response);
 
         let body: AgentNumberType[] = Array.isArray(response.body)
           ? response.body
           : response.body
-          ? JSON.parse(response.body)
-          : [];
-        console.log("Parsed body in number:", body);
+            ? JSON.parse(response.body)
+            : [];
+        // console.log("Parsed body in number:", body);
 
         setAgentNumber(body);
       } catch (error) {
-        console.log("Error in number roster data", error);
+        console.error("Error in number roster data", error);
       } finally {
         setLoading(false);
       }

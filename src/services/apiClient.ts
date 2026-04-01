@@ -31,7 +31,7 @@ const ApiClient = {
     try {
       const URL = LAMBDA_ENDPOINTS[endpoint] || "";
       const response = await axios.get(URL, { params, headers });
-      console.log(`[GET Response] ${URL}:`, response.data);
+      // console.log(`[GET Response] ${URL}:`, response.data);
       return response.data;
     } catch (error: any) {
       console.error("GET request error:", error);
@@ -45,7 +45,7 @@ const ApiClient = {
     headers: Record<string, string> = {
       "Content-Type": "application/json;charset=UTF-8",
       "Access-Control-Allow-Origin": "*",
-    }
+    },
   ) => {
     const functionName = LAMBDA_ENDPOINTS[endpoint];
 
@@ -61,12 +61,12 @@ const ApiClient = {
 
       if (!response.Payload) return null;
       const decoded = new TextDecoder().decode(response.Payload);
-      console.log(`[Lambda Response] ${functionName}:`, decoded);
+      // console.log(`[Lambda Response] ${functionName}:`, decoded);
       return JSON.parse(decoded);
     } else {
       // Normal HTTP POST
       const response = await axios.post(endpoint, data, { headers });
-      console.log(`[POST Response] ${endpoint}:`, response.data);
+      // console.log(`[POST Response] ${endpoint}:`, response.data);
       return response.data;
     }
   },

@@ -29,9 +29,8 @@ const router = createBrowserRouter([
       {
         path: "/roster",
         async lazy() {
-          let { default: NumberRoster } = await import(
-            "./pages/number-roster/NumberRoster"
-          );
+          let { default: NumberRoster } =
+            await import("./pages/number-roster/NumberRoster");
           return { Component: NumberRoster };
         },
       },
@@ -69,7 +68,7 @@ const router = createBrowserRouter([
 ]);
 
 const AppRouter: React.FC<AppRouterProps> = ({ user }) => {
-  console.log("User in router:", user);
+  // console.log("User in router:", user);
   return <RouterProvider router={router} />;
 };
 export default AppRouter;

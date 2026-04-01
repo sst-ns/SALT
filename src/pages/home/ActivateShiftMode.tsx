@@ -89,10 +89,10 @@ const ActivateShiftMode = ({
         user_name: "username", // from where I will fetch it
       };
       const res = await axios.post(import.meta.env.VITE_API_URL, article);
-      console.log("res in activate shift", res);
+      // console.log("res in activate shift", res);
 
       if (res.data === "NIGHT ACTIVATE") {
-        console.log("res in day", res);
+        // console.log("res in day", res);
         toast.success("NIGHT MODE ACTIVATED");
         handleShiftFlag();
       } else {

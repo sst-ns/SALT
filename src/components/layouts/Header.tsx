@@ -16,8 +16,20 @@ const Header = () => {
   const user = useContext(UserContext);
 
   const signOut = () => {
+    // sessionStorage.clear();
+    // window.location.href = import.meta.env.VITE_REACT_SAML_LOGIN_URL;
+
+    sessionStorage.removeItem("tkn_frm_saml");
+    sessionStorage.removeItem("enterpriseId_frm_tkn");
     sessionStorage.clear();
-    window.location.href = import.meta.env.VITE_REACT_SAML_LOGIN_URL;
+
+    const cognitoLogout = `${import.meta.env.VITE_REACT_COGNITO_DOMAIN}/logout?client_id=${
+      import.meta.env.VITE_REACT_COGNITO_CLIENT_ID
+    }&logout_uri=${import.meta.env.VITE_REACT_REDIRECT_URI}`;
+
+    const microsoftLogout = `https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=${encodeURIComponent(cognitoLogout)}`;
+
+    window.location.href = microsoftLogout;
   };
 
   return (

@@ -51,13 +51,13 @@ const Home = () => {
       let body: TableData[] = Array.isArray(response.body)
         ? response.body
         : response.body
-        ? JSON.parse(response.body)
-        : [];
+          ? JSON.parse(response.body)
+          : [];
 
       // console.log("body in home", body);
       setTableData(body);
     } catch (error) {
-      console.log("Error in get table data", error);
+      console.error("Error in get table data", error);
     } finally {
       setLoading(false);
     }
@@ -66,7 +66,7 @@ const Home = () => {
   useEffect(() => {
     if (tableData.length > 0) {
       const filterNoChangeRows = tableData.filter(
-        (d) => d.agent_name.toUpperCase() === "NOCHANGE"
+        (d) => d.agent_name.toUpperCase() === "NOCHANGE",
       );
 
       setSelectedRows(filterNoChangeRows);
