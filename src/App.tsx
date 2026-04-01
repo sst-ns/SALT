@@ -1,13 +1,18 @@
 import AppRouter from "./router";
 import { useSamlAuth } from "./components/hooks/useSamlauth";
+import { UserContext } from "./components/context/UserContext";
+import LoginPage from "./pages/auth/LoginPage";
 import Spinner from "./components/Spinner";
-import {UserContext} from "./components/context/UserContext";
 
 const App = () => {
-  const user = useSamlAuth();
+  const { user, loading } = useSamlAuth();
 
-  if (!user) {
+  if (loading) {
     return <Spinner />;
+  }
+  // console.log("user in app", user);
+  if (!user) {
+    return <LoginPage />;
   }
   // Wrap AppRouter in UserContext.Provider
   return (
