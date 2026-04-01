@@ -22,11 +22,11 @@ type HomeTableProps = {
 const HomeTable = ({ loading, tableData }: HomeTableProps) => {
   const [open, setOpen] = useState(false);
   const [selectedEditRow, setSelectedEditRow] = useState<TableData | null>(
-    null
+    null,
   );
 
   const handleEditClick = (row: TableData) => {
-    console.log("row", row);
+    // console.log("row", row);
     setSelectedEditRow(row);
     setOpen(true);
   };
@@ -59,9 +59,9 @@ const HomeTable = ({ loading, tableData }: HomeTableProps) => {
       } else {
         toast.error("Sorry!,User does Not Exist ,Please Try Again");
       }
-      console.log("res update", res);
+      // console.log("res update", res);
     } catch (error) {
-      console.log("error in update", error);
+      console.error("error in update", error);
       toast.error("Sorry, Something went wrong ,Please Try Again");
     }
   };
@@ -93,7 +93,7 @@ const HomeTable = ({ loading, tableData }: HomeTableProps) => {
         ),
       },
     ],
-    []
+    [],
   );
 
   return (

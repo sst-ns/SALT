@@ -34,7 +34,7 @@ const Logs = () => {
     },
   ];
   useEffect(() => {
-    console.log("Component mounted, fetching logs...");
+    // console.log("Component mounted, fetching logs...");
     fetchLogs();
   }, []);
 
@@ -44,18 +44,18 @@ const Logs = () => {
       const payload = { action: "fetch_logs" };
 
       const response = await ApiClient.post("lambda_SaltAppApi", payload);
-      console.log("Raw Lambda response:", response);
+      // console.log("Raw Lambda response:", response);
 
       let body: LogRow[] = Array.isArray(response.body)
         ? response.body
         : response.body
-        ? JSON.parse(response.body)
-        : [];
+          ? JSON.parse(response.body)
+          : [];
       // Format date
       const formattedBody = body.map((row) => ({
         ...row,
         date_time: moment(row.date_time, "MM-DD-YYYY HH:mm:ss").format(
-          "MMMM D, YYYY h:mm A"
+          "MMMM D, YYYY h:mm A",
         ),
       }));
       setTableData(formattedBody);
