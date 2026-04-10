@@ -19,8 +19,9 @@ type HomeTableProps = {
   loading?: boolean;
   tableData: TableData[];
   setTableData: React.Dispatch<React.SetStateAction<TableData[]>>;
+  getTableData: () => void;
 };
-const HomeTable = ({ loading, tableData }: HomeTableProps) => {
+const HomeTable = ({ loading, tableData, getTableData }: HomeTableProps) => {
   const { user } = useSamlAuth();
   const [open, setOpen] = useState(false);
   const [selectedEditRow, setSelectedEditRow] = useState<TableData | null>(
@@ -57,7 +58,7 @@ const HomeTable = ({ loading, tableData }: HomeTableProps) => {
       const res = await axios.post(import.meta.env.VITE_API_URL, article);
       if (res.data === "Roster Updated") {
         toast.success("Roster Updated, Thanks!!");
-        // getTableData() // after update do  I reload the table ?
+        getTableData(); // after update do  I reload the table ?
       } else {
         toast.error("Sorry!,User does Not Exist ,Please Try Again");
       }

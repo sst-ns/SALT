@@ -93,7 +93,7 @@ const UploadFiles = () => {
       if (isAgentNumbers) {
         const payload = {
           agent_number_file: file.name,
-          username: user?.enterpriseId,
+          user_name: user?.enterpriseId,
         };
 
         const lambdaResponse = await ApiClient.post(
