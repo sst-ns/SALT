@@ -104,6 +104,7 @@ const Home = () => {
         loading={loading}
         tableData={tableData}
         setTableData={setTableData}
+        getTableData={getTableData}
       />
     </Box>
   );

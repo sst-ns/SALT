@@ -13,13 +13,16 @@ import type { TableData } from "./Home";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Spinner from "../../components/Spinner";
+import { useSamlAuth } from "../../components/hooks/useSamlauth";
 
 type HomeTableProps = {
   loading?: boolean;
   tableData: TableData[];
   setTableData: React.Dispatch<React.SetStateAction<TableData[]>>;
+  getTableData: () => void;
 };
-const HomeTable = ({ loading, tableData }: HomeTableProps) => {
+const HomeTable = ({ loading, tableData, getTableData }: HomeTableProps) => {
+  const { user } = useSamlAuth();
   const [open, setOpen] = useState(false);
   const [selectedEditRow, setSelectedEditRow] = useState<TableData | null>(
     null,
@@ -50,12 +53,12 @@ const HomeTable = ({ loading, tableData }: HomeTableProps) => {
         new_name: rowData,
         shift: "",
         selected_row: "",
-        user_name: "username update",
+        user_name: user?.enterpriseId,
       };
       const res = await axios.post(import.meta.env.VITE_API_URL, article);
       if (res.data === "Roster Updated") {
         toast.success("Roster Updated, Thanks!!");
-        // getTableData() // after update do  I reload the table ?
+        getTableData(); // after update do  I reload the table ?
       } else {
         toast.error("Sorry!,User does Not Exist ,Please Try Again");
       }

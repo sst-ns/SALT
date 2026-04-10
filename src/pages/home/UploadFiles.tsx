@@ -7,11 +7,13 @@ import ApiClient from "../../services/apiClient";
 import toast from "react-hot-toast";
 // import { getCredentialsProvider } from "../../components/hooks/useSamlauth";
 import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
+import { useSamlAuth } from "../../components/hooks/useSamlauth";
 
 const Number_BUCKET = "agent-numbers";
 const Roster_BUCKET = "uploadexcelfile";
 
 const UploadFiles = () => {
+  const { user } = useSamlAuth();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [s3Client, setS3Client] = useState<S3Client | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -89,7 +91,10 @@ const UploadFiles = () => {
       toast.success(`${file.name} uploaded successfully!`);
 
       if (isAgentNumbers) {
-        const payload = { agent_number_file: file.name };
+        const payload = {
+          agent_number_file: file.name,
+          user_name: user?.enterpriseId,
+        };
 
         const lambdaResponse = await ApiClient.post(
           "lambda_MobileNumbersUpdate",
