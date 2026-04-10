@@ -3,6 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import type { TableData } from "./Home";
+import { useSamlAuth } from "../../components/hooks/useSamlauth";
 
 type ActiveShiftModeProps = {
   selectedRows?: TableData[];
@@ -16,6 +17,7 @@ const ActivateShiftMode = ({
   switchShift,
   handleShiftFlag,
 }: ActiveShiftModeProps) => {
+  const { user } = useSamlAuth();
   const [loading, setLoading] = useState<boolean>(false);
   // const username = sessionStorage.getItem("userName") || "UnknownUser";
   function onlyUnique(value: any, index: any, self: any) {
@@ -86,7 +88,8 @@ const ActivateShiftMode = ({
         shift: mode,
         selected_row: mode === "NIGHT" ? "" : temp,
         new_name: "",
-        user_name: "username", // from where I will fetch it
+        // user_name: "username", // from where I will fetch it
+        user_name: user?.enterpriseId, // from where I will fetch it
       };
       const res = await axios.post(import.meta.env.VITE_API_URL, article);
       // console.log("res in activate shift", res);
