@@ -351,8 +351,8 @@ export default function DidMapping() {
                 setLoading(true);
 
                 const res = await ApiClient.post("lambda_SaltAppApi", {
-                  action: "create_company",
-                  companyName: value,
+                  action: "add_new_company",
+                  company_name: value,
                 });
                 console.log("res", res);
                 const newOption = {
