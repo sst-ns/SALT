@@ -4,6 +4,7 @@ import ActivateShiftMode from "./ActivateShiftMode";
 import HomeTable from "./HomeTable";
 import { useEffect, useState } from "react";
 import ApiClient from "../../services/apiClient";
+import { useSamlAuth } from "../../components/hooks/useSamlauth";
 
 export type TableData = {
   // id: number;
@@ -18,6 +19,7 @@ export type TableData = {
 };
 
 const Home = () => {
+  const { user } = useSamlAuth();
   const [shift, setShift] = useState<string>("NIGHT");
   const [shiftFlag, setShiftFlag] = useState<boolean>(false);
 
@@ -40,8 +42,10 @@ const Home = () => {
 
     try {
       const payload = {
-        action: "fetch_skill_routing",
-        shift: shift.toUpperCase(),
+        // action: "fetch_skill_routing",
+        // shift: shift.toUpperCase(),
+        action: "fetch_skills",
+        enterprise_id: user?.enterpriseId,
         // selectedRows,
       };
       // console.log("Sending payload:", payload);
