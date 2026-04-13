@@ -13,27 +13,33 @@ import type { TableData } from "./Home";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Spinner from "../../components/Spinner";
+import { useSamlAuth } from "../../components/hooks/useSamlauth";
 
 type HomeTableProps = {
   loading?: boolean;
   tableData: TableData[];
   setTableData: React.Dispatch<React.SetStateAction<TableData[]>>;
+  getTableData: () => void;
 };
-const HomeTable = ({ loading, tableData }: HomeTableProps) => {
+const HomeTable = ({ loading, tableData, getTableData }: HomeTableProps) => {
+  const { user } = useSamlAuth();
   const [open, setOpen] = useState(false);
   const [selectedEditRow, setSelectedEditRow] = useState<TableData | null>(
     null,
   );
+  const [load, setLoad] = useState(false);
 
   const handleEditClick = (row: TableData) => {
     // console.log("row", row);
-    setSelectedEditRow(row);
+    // setSelectedEditRow(row);
+    setSelectedEditRow({ ...row });
     setOpen(true);
   };
 
   const handleSave = async (updatedData: TableData) => {
     // console.log("Updated Data", updatedData);
-
+    setLoad(true);
+    const toastId = toast.loading("Saving...");
     try {
       const rowData = {
         skill_group: updatedData.skill_group,
@@ -50,19 +56,27 @@ const HomeTable = ({ loading, tableData }: HomeTableProps) => {
         new_name: rowData,
         shift: "",
         selected_row: "",
-        user_name: "username update",
+        user_name: user?.enterpriseId,
       };
       const res = await axios.post(import.meta.env.VITE_API_URL, article);
       if (res.data === "Roster Updated") {
-        toast.success("Roster Updated, Thanks!!");
-        // getTableData() // after update do  I reload the table ?
+        toast.success("Roster Updated, Thanks!!", {
+          id: toastId,
+        });
+        getTableData();
+        setSelectedEditRow(null);
       } else {
-        toast.error("Sorry!,User does Not Exist ,Please Try Again");
+        toast.error("Sorry, User does Not Exist. Please Try Again", {
+          id: toastId,
+        });
       }
       // console.log("res update", res);
     } catch (error) {
       console.error("error in update", error);
       toast.error("Sorry, Something went wrong ,Please Try Again");
+    } finally {
+      setLoad(false);
+      setOpen(false);
     }
   };
 
@@ -111,9 +125,14 @@ const HomeTable = ({ loading, tableData }: HomeTableProps) => {
       {/* Edit Modal */}
       <EditModal
         open={open}
-        onClose={() => setOpen(false)}
+        // onClose={() => setOpen(false)}
+        onClose={() => {
+          setOpen(false);
+          setSelectedEditRow(null);
+        }}
         onSave={handleSave}
         rowData={selectedEditRow}
+        load={load}
       />
     </Box>
   );
@@ -126,6 +145,7 @@ type EditModalProps = {
   onClose: () => void;
   onSave: (updatedData: any) => void;
   rowData: any;
+  load: boolean;
 };
 
 const style = {
@@ -140,12 +160,27 @@ const style = {
   width: 400,
 };
 
-const EditModal = ({ open, onClose, onSave, rowData }: EditModalProps) => {
+const EditModal = ({
+  load,
+  open,
+  onClose,
+  onSave,
+  rowData,
+}: EditModalProps) => {
   const [formData, setFormData] = useState(rowData);
 
+  // useEffect(() => {
+  //   setFormData(rowData);
+  // }, [rowData]);
   useEffect(() => {
+    if (!open) return;
     setFormData(rowData);
-  }, [rowData]);
+  }, [open, rowData]);
+  // useEffect(() => {
+  //   if (open && rowData) {
+  //     setFormData(rowData);
+  //   }
+  // }, [open, rowData]);
 
   const handleChange = (field: string, value: string | number) => {
     setFormData((prev: any) => ({ ...prev, [field]: value }));
@@ -154,7 +189,7 @@ const EditModal = ({ open, onClose, onSave, rowData }: EditModalProps) => {
   const handleSave = () => {
     // console.log("form data", formData);
     onSave(formData);
-    onClose();
+    // onClose();
   };
 
   if (!formData) return null;
@@ -163,7 +198,7 @@ const EditModal = ({ open, onClose, onSave, rowData }: EditModalProps) => {
     <Modal open={open} onClose={onClose}>
       <Box sx={style}>
         <Typography variant="h6" fontWeight={700} mb={2} color="primary.main">
-          Edit Record - {formData.skillGroup}
+          Edit Record - {formData.skill_group}
         </Typography>
 
         <Stack spacing={2}>
@@ -203,8 +238,13 @@ const EditModal = ({ open, onClose, onSave, rowData }: EditModalProps) => {
           <Button variant="outlined" color="inherit" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="contained" color="primary" onClick={handleSave}>
-            Save
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSave}
+            disabled={load}
+          >
+            {load ? "Saving..." : "Save"}
           </Button>
         </Stack>
       </Box>
