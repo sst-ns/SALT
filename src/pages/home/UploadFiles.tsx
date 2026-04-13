@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 // import { getCredentialsProvider } from "../../components/hooks/useSamlauth";
 import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 import { useSamlAuth } from "../../components/hooks/useSamlauth";
+import axios from "axios";
 
 const Number_BUCKET = "agent-numbers";
 const Roster_BUCKET = "uploadexcelfile";
@@ -81,14 +82,33 @@ const UploadFiles = () => {
         },
       });
 
-      // upload.on("httpUploadProgress", (progress: any) => {
-      //   console.log("Progress:", progress);
-      // });
-
       await upload.done();
-      // console.log("upload Res", uploadRes);
 
       toast.success(`${file.name} uploaded successfully!`);
+
+      // for logs
+      if (isRoster || isAgentNumbers) {
+        const payload = {
+          operation: "UPLOAD",
+          roster_name: file.name,
+          user_name: user?.enterpriseId,
+        };
+
+        const lambdaResponse = await axios.post(
+          import.meta.env.VITE_API_URL,
+          payload,
+        );
+
+        // console.log("Lambda response for isRoster:", lambdaResponse);
+
+        if (lambdaResponse.status === 200) {
+          // toast.success("Roster updated successfully!");
+          console.log("Logs updated");
+        } else {
+          // toast.error("Roster log processing failed.");
+          console.log("Error while Logs updating ");
+        }
+      }
 
       if (isAgentNumbers) {
         const payload = {
@@ -101,7 +121,7 @@ const UploadFiles = () => {
           payload,
         );
 
-        // console.log("Lambda response for numberUpdate:", lambdaResponse);
+        console.log("Lambda response for numberUpdate:", lambdaResponse);
 
         if (lambdaResponse?.statusCode === 200) {
           toast.success(

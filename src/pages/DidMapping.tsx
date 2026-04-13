@@ -150,6 +150,7 @@ export default function DidMapping() {
 
       setQueueList(
         (queueRes?.body?.queues || []).map((q: string, i: number) => ({
+          // (queueRes?.body || []).map((q: string, i: number) => ({
           label: q,
           value: q,
           id: i,
