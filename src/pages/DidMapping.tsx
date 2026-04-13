@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 import swal from "sweetalert";
 import toast from "react-hot-toast";
 import ApiClient from "../services/apiClient";
@@ -325,12 +326,60 @@ export default function DidMapping() {
 
         <div className="filterForm">
           <label>Company Name:</label>
-          <Select
+          <CreatableSelect
             options={companyList}
             value={companyTemp}
             onChange={(sel) => handleChange("companyName", sel)}
+            onCreateOption={async (inputValue) => {
+              const value = inputValue.trim();
+
+              if (!value) {
+                toast.error("Company name cannot be empty");
+                return;
+              }
+
+              const exists = companyList.some(
+                (c) => c.value.toLowerCase() === value.toLowerCase(),
+              );
+
+              if (exists) {
+                toast.error("Company already exists");
+                return;
+              }
+
+              try {
+                setLoading(true);
+
+                const res = await ApiClient.post("lambda_SaltAppApi", {
+                  action: "create_company",
+                  companyName: value,
+                });
+                console.log("res", res);
+                const newOption = {
+                  label: value,
+                  value: value,
+                };
+
+                setCompanyList((prev) => [...prev, newOption]);
+                setCompanyTemp(newOption);
+
+                setState((prev) => ({
+                  ...prev,
+                  companyName: value,
+                }));
+
+                toast.success("Company created successfully");
+              } catch (error) {
+                console.error("Error creating company:", error);
+                toast.error("Failed to create company");
+              } finally {
+                setLoading(false);
+              }
+            }}
             isDisabled={loading || !editAccess}
             styles={customSelectStyles}
+            placeholder="Select or create company..."
+            formatCreateLabel={(inputValue) => `Create "${inputValue}"`}
           />
         </div>
 
