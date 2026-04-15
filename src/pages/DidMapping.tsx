@@ -59,7 +59,7 @@ export default function DidMapping() {
   const [didList, setDidList] = useState<DropdownOption[]>([]);
   const [companyList, setCompanyList] = useState<DropdownOption[]>([]);
   const [cfList, setCfList] = useState<DropdownOption[]>([]);
-  const [queueList, setQueueList] = useState<DropdownOption[]>([]);
+  // const [queueList, setQueueList] = useState<DropdownOption[]>([]);
   const [_userRole, setUserRole] = useState<string>("");
   const [editAccess, setEditAccess] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
@@ -75,7 +75,7 @@ export default function DidMapping() {
   const [didTemp, setDidTemp] = useState<DropdownOption | null>(null);
   const [companyTemp, setCompanyTemp] = useState<DropdownOption | null>(null);
   const [cfTemp, setCfTemp] = useState<DropdownOption | null>(null);
-  const [queueTemp, setQueueTemp] = useState<DropdownOption | null>(null);
+  // const [queueTemp, setQueueTemp] = useState<DropdownOption | null>(null);
 
   const fetchUserRole = async () => {
     try {
@@ -117,11 +117,12 @@ export default function DidMapping() {
     try {
       setLoading(true);
 
-      const [didRes, companyRes, cfRes, queueRes] = await Promise.all([
+      // const [didRes, companyRes, cfRes, queueRes] = await Promise.all([
+      const [didRes, companyRes, cfRes] = await Promise.all([
         ApiClient.post("lambda_SaltAppApi", { action: "fetch_did_numbers" }),
         ApiClient.post("lambda_SaltAppApi", { action: "fetch_company_names" }),
         ApiClient.post("lambda_SaltAppApi", { action: "fetch_contact_flows" }),
-        ApiClient.post("lambda_SaltAppApi", { action: "fetch_queues" }),
+        // ApiClient.post("lambda_SaltAppApi", { action: "fetch_queues" }),
       ]);
 
       setDidList(
@@ -148,14 +149,14 @@ export default function DidMapping() {
         })),
       );
 
-      setQueueList(
-        (queueRes?.body?.queues || []).map((q: string, i: number) => ({
-          // (queueRes?.body || []).map((q: string, i: number) => ({
-          label: q,
-          value: q,
-          id: i,
-        })),
-      );
+      // setQueueList(
+      //   (queueRes?.body?.queues || []).map((q: string, i: number) => ({
+      //     // (queueRes?.body || []).map((q: string, i: number) => ({
+      //     label: q,
+      //     value: q,
+      //     id: i,
+      //   })),
+      // );
     } catch (error) {
       console.error("Error fetching dropdown data:", error);
       toast.error("Failed to load dropdown data");
@@ -203,7 +204,7 @@ export default function DidMapping() {
     if (field === "didnumber") setDidTemp(selected);
     else if (field === "companyName") setCompanyTemp(selected);
     else if (field === "CFName") setCfTemp(selected);
-    else if (field === "QueueName") setQueueTemp(selected);
+    // else if (field === "QueueName") setQueueTemp(selected);
     setState({ ...state, [field]: selected.value });
   };
 
@@ -217,8 +218,8 @@ export default function DidMapping() {
     if (
       !state.didnumber ||
       !state.companyName ||
-      !state.CFName ||
-      !state.QueueName
+      !state.CFName
+      // !state.QueueName
     ) {
       swal("Error", "Please select all dropdowns before submitting", "error");
       return;
@@ -243,11 +244,11 @@ export default function DidMapping() {
         const contactFlowArn = cfDetailRes?.body?.contact_flow_arn;
 
         // Fetch Queue Details
-        const queueDetailRes = await ApiClient.post("lambda_SaltAppApi", {
-          action: "fetch_queue_details",
-          queue_name: state.QueueName,
-        });
-        const queueArn = queueDetailRes?.body?.queue_arn;
+        // const queueDetailRes = await ApiClient.post("lambda_SaltAppApi", {
+        //   action: "fetch_queue_details",
+        //   queue_name: state.QueueName,
+        // });
+        // const queueArn = queueDetailRes?.body?.queue_arn;
 
         // Update Mapping
         const update_data = await ApiClient.post("lambda_SaltAppApi", {
@@ -256,8 +257,8 @@ export default function DidMapping() {
           companyName: state.companyName,
           CFName: state.CFName,
           contactFlow: contactFlowArn,
-          Qname: state.QueueName,
-          queue: queueArn,
+          // Qname: state.QueueName,
+          // queue: queueArn,
         });
         if (update_data) {
           toast.success("DID Mapping Updated successfully.");
@@ -281,7 +282,7 @@ export default function DidMapping() {
           setDidTemp(null);
           setCompanyTemp(null);
           setCfTemp(null);
-          setQueueTemp(null);
+          // setQueueTemp(null);
           setState({
             didnumber: "",
             companyName: "",
@@ -395,7 +396,7 @@ export default function DidMapping() {
           />
         </div>
 
-        <div className="filterForm">
+        {/* <div className="filterForm">
           <label>Queue Name:</label>
           <Select
             options={queueList}
@@ -404,7 +405,7 @@ export default function DidMapping() {
             isDisabled={loading || !editAccess}
             styles={customSelectStyles}
           />
-        </div>
+        </div> */}
 
         <button
           onClick={handleSubmit}
